@@ -1,0 +1,57 @@
+---
+title: "yli130_Assignment1"
+author: "Yanxi Li"
+date: "9/12/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Read a file
+```{r comment=NA, message=FALSE}
+# import the data
+data <- read.csv('Movie-Ratings.csv')
+```
+
+### Summary Statistics
+```{r comment=NA, message=FALSE}
+# overall the data
+summary(data) 
+str(data)
+
+# rename the column name
+colnames(data) <- c('Film', 'Genre', 'CriticRating', 'AudienceRating', 'BudgetMillions', 'Year')
+# check the column name
+colnames(data)
+
+# change 3 columns into factor
+data$Film <- as.factor(data$Film)
+data$Genre <- as.factor(data$Genre)
+data$Year <- as.factor(data$Year)
+
+# check the summary again
+summary(data)
+```
+
+### plot graphs
+```{r comment=NA, message=FALSE}
+library(ggplot2)   # to plot the figure
+
+#Audience_Rating & Genre
+p <- ggplot(data=data, aes(x=Genre, y=AudienceRating, color=Genre))
+p + geom_jitter(size=0.9) + geom_boxplot(alpha=0.5)
+#Critic_Rating & Genre
+q <- ggplot(data=data, aes(x=CriticRating, y=AudienceRating, color=Genre))
+q + geom_point(size=0.8) + geom_smooth(fill=NA)
+```
+
+
+
+
+
+
+
