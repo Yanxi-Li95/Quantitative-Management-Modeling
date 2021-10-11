@@ -1,0 +1,146 @@
+---
+title: "yli130_Assignment 3"
+author: "Yanxi Li"
+date: "10/9/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Create & Solve Model 
+
+```{r}
+# using the library
+library(lpSolveAPI)
+
+# set the working directory
+setwd("C:/Users/yanxi/OneDrive - Kent State University/Desktop/Quantitative Management Modeling/Assignment")
+
+# read the lp file which has the formulation in it
+lprec <- read.lp("Weight.lp")
+
+# solve the model
+solve(lprec)
+
+# get maximum profit
+get.objective(lprec)
+
+# each decision variable's value
+get.variables(lprec)
+```
+
+## Reduced Cost
+
+```{r cars}
+get.sensitivity.obj(lprec) # get reduced cost
+
+# get range bottom line
+get.sensitivity.obj(lprec)$objfrom
+
+# get range upper line
+get.sensitivity.obj(lprec)$objtill
+```
+
+Reduced cost value is shown in the next shadow price dual part.
+
+## Shadow Price
+
+```{r}
+get.sensitivity.rhs(lprec)  # get shadow price / dual solution
+
+# get shadow price value (the first 11 value)
+get.sensitivity.rhs(lprec)$duals
+
+# get range bottom line
+get.sensitivity.rhs(lprec)$dualsfrom
+
+# get range upper line
+get.sensitivity.rhs(lprec)$dualstill
+```
+As shown above, dual value is 0, 0, 0, 12, 20, 60, 0, 0, 0, -0.08, 0.56, 0, 0, -24, -40, 0, 0, -360, -120, 0.
+Dual value is mixed with shadow price and reduced cost.
+
+The first 11 is shadow price value which is 0, 0, 0, 12, 20, 60, 0, 0, 0, -0.08, 0.56.
+
+THe last 9 is reduce price value which is 0, 0, -24, -40, 0, 0, -360, -120, 0.
+
+## Range of Reduced Cost
+
+Here I am trying to build a data-frame which can show the results clearly.
+```{r}
+
+# build 3 columns
+Plant_Size <- c("Plant1_Large", "Plant1_Medium", "Plant1_Small", "Plant2_Large", 
+                              "Plant2_Medium", "Plant2_Small", "Plant_3_Large", 
+                                                    "Plant3_Medium", "Plant3_Small")
+
+Reduce_Cost_Bottom <- c(3.60e+02, 3.45e+02, -1.00e+30, -1.00e+30, 
+                                      3.45e+02, 2.52e+02, -1.00e+30, -1.00e+30, 2.04e+02)
+
+Reduce_Cost_Upper <- c(4.60e+02, 4.20e+02, 3.24e+02, 4.60e+02, 4.20e+02, 
+                                                  3.24e+02, 7.80e+02, 4.80e+02, 1.00e+30)
+
+# build data-frame
+Reduce_Cost_Range <- data.frame(Plant_Size, Reduce_Cost_Bottom, Reduce_Cost_Upper)
+
+# show Reduced Cost Range results
+Reduce_Cost_Range
+```
+
+## Range of Shadow Price
+
+Similar as the Reduced Cost shows above.
+```{r}
+
+# build 3 columns
+Constraints <- c("Constraint_1", "Constraint_2", "Constraint_3", "Constraint_4", "Constraint_5", 
+                                 "Constraint_6", "Constraint_7", "Constraint_8", "Constraint_9", 
+                                                                   "Constraint_10", "Constraint_11")
+
+Shadow_Price_Bottom <- c(-1e+30, -1e+30, -1e+30, 1.122222e+04, 1.15e+04, 4.8e+03, -1e+30,
+                                                         -1e+30, -1e+30, -2.5e+04, -1.25e+04)
+
+Shadow_Price_Upper <- c(1e+30, 1e+30, 1e+30, 1.388889e+04, 1.25e+04, 5.181818e+03, 1e+30,
+                                                                  1e+30, 1e+30, 2.5e+04, 1.25e+04)
+# build data-frame
+Shadow_Price_Range <- data.frame(Constraints, Shadow_Price_Bottom, Shadow_Price_Upper)
+
+# show Shadow Price Range results
+Shadow_Price_Range
+```
+
+## Formualte Dual and Solve
+
+```{r}
+# formulate the duals in the lp file
+lprec_new <- read.lp("Assign3.lp")
+
+# solve the dual model
+solve(lprec_new)
+
+# get dual optimal solution
+get.objective(lprec_new)
+
+# get dual decision variables
+get.variables(lprec_new)
+```
+According to the above result, dual model optimal solution is the same as primal model, and dual model's decision variables' value is exactly the primal model's shadow price value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
